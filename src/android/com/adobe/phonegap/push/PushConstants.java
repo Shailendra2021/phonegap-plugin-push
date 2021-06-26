@@ -6,6 +6,7 @@ public interface PushConstants {
   public static final String REGISTRATION_TYPE = "registrationType";
   public static final String FOREGROUND = "foreground";
   public static final String TITLE = "title";
+  public static final String IMAGE_ATTACHMENT_URL = "media-attachment-url";
   public static final String NOT_ID = "notId";
   public static final String PUSH_BUNDLE = "pushBundle";
   public static final String ICON = "icon";

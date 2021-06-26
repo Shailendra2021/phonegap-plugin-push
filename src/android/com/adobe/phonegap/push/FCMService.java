@@ -23,9 +23,9 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.WearableExtender;
-import android.support.v4.app.RemoteInput;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationCompat.WearableExtender;
+import androidx.core.app.RemoteInput;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -91,7 +91,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
       Context applicationContext = getApplicationContext();
 
       SharedPreferences prefs = applicationContext.getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH,
-          Context.MODE_PRIVATE);
+              Context.MODE_PRIVATE);
       boolean forceShow = prefs.getBoolean(FORCE_SHOW, false);
       boolean clearBadge = prefs.getBoolean(CLEAR_BADGE, false);
       String messageKey = prefs.getString(MESSAGE_KEY, MESSAGE);
@@ -195,7 +195,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
    */
   private String normalizeKey(String key, String messageKey, String titleKey, Bundle newExtras) {
     if (key.equals(BODY) || key.equals(ALERT) || key.equals(MP_MESSAGE) || key.equals(GCM_NOTIFICATION_BODY)
-        || key.equals(TWILIO_BODY) || key.equals(messageKey) || key.equals(AWS_PINPOINT_BODY)) {
+            || key.equals(TWILIO_BODY) || key.equals(messageKey) || key.equals(AWS_PINPOINT_BODY)) {
       return MESSAGE;
     } else if (key.equals(TWILIO_TITLE) || key.equals(SUBJECT) || key.equals(titleKey)) {
       return TITLE;
@@ -244,7 +244,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
             // If object contains message keys promote each value to the root of the bundle
             JSONObject data = new JSONObject((String) json);
             if (data.has(ALERT) || data.has(MESSAGE) || data.has(BODY) || data.has(TITLE) || data.has(messageKey)
-                || data.has(titleKey)) {
+                    || data.has(titleKey)) {
               Iterator<String> jsonIter = data.keys();
               while (jsonIter.hasNext()) {
                 String jsonKey = jsonIter.next();
@@ -380,7 +380,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     SecureRandom random = new SecureRandom();
     int requestCode = random.nextInt();
     PendingIntent contentIntent = PendingIntent.getActivity(this, requestCode, notificationIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent.FLAG_UPDATE_CURRENT);
 
     Intent dismissedNotificationIntent = new Intent(this, PushDismissedHandler.class);
     dismissedNotificationIntent.putExtra(PUSH_BUNDLE, extras);
@@ -390,7 +390,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
 
     requestCode = random.nextInt();
     PendingIntent deleteIntent = PendingIntent.getBroadcast(this, requestCode, dismissedNotificationIntent,
-        PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent.FLAG_CANCEL_CURRENT);
 
     NotificationCompat.Builder mBuilder = null;
 
@@ -417,8 +417,8 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     }
 
     mBuilder.setWhen(System.currentTimeMillis()).setContentTitle(fromHtml(extras.getString(TITLE)))
-        .setTicker(fromHtml(extras.getString(TITLE))).setContentIntent(contentIntent).setDeleteIntent(deleteIntent)
-        .setAutoCancel(true);
+            .setTicker(fromHtml(extras.getString(TITLE))).setContentIntent(contentIntent).setDeleteIntent(deleteIntent)
+            .setAutoCancel(true);
 
     SharedPreferences prefs = context.getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH, Context.MODE_PRIVATE);
     String localIcon = prefs.getString(ICON, null);
@@ -526,11 +526,12 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
   }
 
   private void createActions(Bundle extras, NotificationCompat.Builder mBuilder, Resources resources,
-      String packageName, int notId) {
+                             String packageName, int notId) {
     Log.d(LOG_TAG, "create actions: with in-line");
     String actions = extras.getString(ACTIONS);
     if (actions != null) {
       try {
+
         JSONArray actionsArray = new JSONArray(actions);
         ArrayList<NotificationCompat.Action> wActions = new ArrayList<NotificationCompat.Action>();
         for (int i = 0; i < actionsArray.length(); i++) {
@@ -560,26 +561,26 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
             if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.M) {
               Log.d(LOG_TAG, "push activity for notId " + notId);
               pIntent = PendingIntent.getActivity(this, uniquePendingIntentRequestCode, intent,
-                  PendingIntent.FLAG_ONE_SHOT);
+                      PendingIntent.FLAG_ONE_SHOT);
             } else {
               Log.d(LOG_TAG, "push receiver for notId " + notId);
               pIntent = PendingIntent.getBroadcast(this, uniquePendingIntentRequestCode, intent,
-                  PendingIntent.FLAG_ONE_SHOT);
+                      PendingIntent.FLAG_ONE_SHOT);
             }
           } else if (foreground) {
             intent = new Intent(this, PushHandlerActivity.class);
             updateIntent(intent, action.getString(CALLBACK), extras, foreground, notId);
             pIntent = PendingIntent.getActivity(this, uniquePendingIntentRequestCode, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.FLAG_UPDATE_CURRENT);
           } else {
             intent = new Intent(this, BackgroundActionButtonHandler.class);
             updateIntent(intent, action.getString(CALLBACK), extras, foreground, notId);
             pIntent = PendingIntent.getBroadcast(this, uniquePendingIntentRequestCode, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.FLAG_UPDATE_CURRENT);
           }
 
           NotificationCompat.Action.Builder actionBuilder = new NotificationCompat.Action.Builder(
-              getImageId(resources, action.optString(ICON, ""), packageName), action.getString(TITLE), pIntent);
+                  getImageId(resources, action.optString(ICON, ""), packageName), action.getString(TITLE), pIntent);
 
           RemoteInput remoteInput = null;
           if (inline) {
@@ -596,7 +597,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
             mBuilder.addAction(wAction);
           } else {
             mBuilder.addAction(getImageId(resources, action.optString(ICON, ""), packageName), action.getString(TITLE),
-                pIntent);
+                    pIntent);
           }
           wAction = null;
           pIntent = null;
@@ -604,6 +605,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         mBuilder.extend(new WearableExtender().addActions(wActions));
         wActions.clear();
       } catch (JSONException e) {
+        Log.e("MYAPP", "unexpected JSON exception", e);
         // nope
       }
     }
@@ -675,7 +677,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
           stacking = stacking.replace("%n%", sizeListMessage);
         }
         NotificationCompat.InboxStyle notificationInbox = new NotificationCompat.InboxStyle()
-            .setBigContentTitle(fromHtml(extras.getString(TITLE))).setSummaryText(fromHtml(stacking));
+                .setBigContentTitle(fromHtml(extras.getString(TITLE))).setSummaryText(fromHtml(stacking));
 
         for (int i = messageList.size() - 1; i >= 0; i--) {
           notificationInbox.addLine(fromHtml(messageList.get(i)));
@@ -704,21 +706,32 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
       mBuilder.setStyle(bigPicture);
     } else {
       setNotification(notId, "");
+      String picture = extras.getString(IMAGE_ATTACHMENT_URL);// from gcm
+      if (picture != null) {
+        NotificationCompat.BigPictureStyle bigPicture = new NotificationCompat.BigPictureStyle();
+        bigPicture.bigPicture(getBitmapFromURL(picture));
+        bigPicture.setBigContentTitle(fromHtml(extras.getString(TITLE)));
+        bigPicture.setSummaryText(fromHtml(message));
 
-      NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
 
-      if (message != null) {
-        mBuilder.setContentText(fromHtml(message));
+        mBuilder.setStyle(bigPicture);
+      } else {
+        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
 
-        bigText.bigText(fromHtml(message));
-        bigText.setBigContentTitle(fromHtml(extras.getString(TITLE)));
+        if (message != null) {
+          mBuilder.setContentText(fromHtml(message));
 
-        String summaryText = extras.getString(SUMMARY_TEXT);
-        if (summaryText != null) {
-          bigText.setSummaryText(fromHtml(summaryText));
+          bigText.bigText(fromHtml(message));
+          bigText.setBigContentTitle(fromHtml(extras.getString(TITLE)));
+
+          String summaryText = extras.getString(SUMMARY_TEXT);
+          if (summaryText != null) {
+            bigText.setSummaryText(fromHtml(summaryText));
+          }
+
+          mBuilder.setStyle(bigText);
+
         }
-
-        mBuilder.setStyle(bigText);
       }
       /*
       else {
@@ -737,7 +750,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
       mBuilder.setSound(android.provider.Settings.System.DEFAULT_RINGTONE_URI);
     } else if (soundname != null && !soundname.contentEquals(SOUND_DEFAULT)) {
       Uri sound = Uri
-          .parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + soundname);
+              .parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/raw/" + soundname);
       Log.d(LOG_TAG, sound.toString());
       mBuilder.setSound(sound);
     } else {
