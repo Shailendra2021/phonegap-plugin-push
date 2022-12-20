@@ -197,7 +197,7 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
     pushHandler.isInline = YES;
     [pushHandler notificationReceived];
 
-    completionHandler(UNNotificationPresentationOptionAlert);
+    completionHandler(UNNotificationPresentationOptionNone);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
